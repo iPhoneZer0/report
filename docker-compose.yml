@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./public/:/var/www/public/
+    depends_on:
+      - php
+    tty: true
+  php:
+    container_name: php
+    tty: true 
+    build:
+      context: .
+      target: php
+    volumes:
+      - ./public/:/var/www/public/
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: techc
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      TZ: Asia/Tokyo
+    
+    tty: true
+    volumes:
+      - mysql:/var/lib/mysql
+    command: >
+      mysqld
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --max_allowed_packet=4MB
+volumes:
+  image:
+    driver: local
+  mysql:
+    driver: local
